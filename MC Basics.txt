@@ -1,0 +1,56 @@
+MACHINE CODING:
+	- It involves solving a design problem in a matter of couple of hours.
+	- It requires designing and coding a clean, modular, and extensible solution based on a specif set of requirements.
+	
+Expectations:
+	These may vary based on seniority and also from company to company. But the general expectations of a good solution are:
+	- Code should be working and demonstrable.
+	- Code should be functionally correct.
+	- Code should be modular and redable.
+	- Separation of concers should be addressed.
+	- Code should accommodate new requirements with minimal changes.
+	- There should be a main method from where the code could be easily testable.
+	- A UI is generally not required.
+
+General guidelines to follow:
+	- Wirte Object oriented code (multiple classes each with properties and methods).
+	- Identify all classes (or models), and they should reside in a 'models' folder.
+	- A model should contain only the properties of the entity, a constructor, getters, and setters for the properties.
+	- Create different classes for the business logic layer. These classes interact with different models and contains the
+	  core logic of the solution. These are generally called services and are kept in the 'services' folder.
+	- The main method which will be used to test your solution should reside in a Driver class.
+	- Anything that doesn't deal with the core logic of the solution, like taking user input, should reside here only.
+	- Ideally, the primary service class should be initialized and called from this class.
+	- Use proper and self-explanatory variable and method names.
+	- Create method names based on what is actually happening inside that method instead of why the caller is calling that method.
+	- Create smaller methods and avoid having a lot of logic in a single method.
+
+How to proceed in Machine Coding round:
+	1. Understand the question properly (5-10 mins)
+		- Read the problem statement carefully, do not assume anything, and ask clarifying questions.
+	
+	2. Getting to the solution (10-15 mins)
+		- Spend ~10 mins thinking about the design of your solution, and how you can make it extensible for optional requirements
+		  or any common extension that you can think of.
+		- Estimate how much time will it take you to code with all the requirements. Prioritize which ones to do so as to atleast
+		  solve the most critical ones.
+		- Also, estimate some time for testing and making changes to have the solution working.
+		- If your current solution will take a lot of time to code, try to think of a simpler design that is good enough and will
+		  take less time to code.
+		- Don't prioritize an optional requirement over a mandatory requirement.
+		- Optional: If possible, draw a UML diagram of your design for clarity.
+	
+	3. Coding (60-75 mins):
+		- Code fast so as to complete as many requirements as possible.
+		- In the end, you need to have working code. And be ready with good sample examples to demonstrate your solution.
+		- Gracefully handle exceptions and other corner cases.
+		- Write readable code with proper names. Use comments, if possible.
+		- Use a powerful IDE that saves time to write the boilerplate code.
+	
+	4. Demonstration: 
+		- While demonstrating, make sure to give a high-level overview of you solution. Don't explain each and every line of the
+		  code. Your code should be modular and self-explanatory.
+		- Tell the interviewer about all the rquirements that you've completed and if your solution is extensible for other
+		  requirements.
+		- After running your solution on sample input, it may be a good idea to ask the interviewer if they want you to test
+		  with any other input.

@@ -1,0 +1,3 @@
+1. javac -d ./out/ src/Driver.java
+2. cd out
+3. java src.Driver
