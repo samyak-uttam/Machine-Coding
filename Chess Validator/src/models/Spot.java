@@ -1,14 +1,16 @@
 package src.models;
 
+import src.models.piece.Piece;
+
 public class Spot {
 	private Piece piece;
 	private int x;
 	private int y;
 
-	public Spot(Piece piece, int x, int y) {
-		this.piece = piece;
+	public Spot(int x, int y, Piece piece) {
 		this.x = x;
 		this.y = y;
+		this.piece = piece;
 	}
 
 	public Piece getPiece() {

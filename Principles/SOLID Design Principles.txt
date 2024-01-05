@@ -1,0 +1,35 @@
+SOLID Design Principles are a set of five software design principles, which aim to make software design easy
+to understand, maintain, and flexible.
+
+The SOLID principles are:
+	1. Single-responsibility principle: 
+		- "There should never be more than one reason for a class to change."
+		- In other words, every class should have only one responsibility.
+		- Having multiple reasons to change means that the module has high coupling.
+		- The more responsibilities your class has, the more often you'll change it.
+
+	2. Open-Closed principle:
+		- "Software entities ... should be open for extension, but closed for modification."
+		- A class should be extensible, i.e., we should be able to make a class behave in different ways as new requirements come.
+		- The extension should happen without any modification to the class.
+		- This can be achieved through abstraction, i.e., by creating interfaces.
+		- Interfaces should not change based on new requirements, and new requirements can be taken care of by implementing classes.
+
+	3. Liskov substitution principle:
+		- "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it".
+		- A client using a base class should continue to function properly even if a derived class is passed to it.
+
+	4. Interface Segregation principle:
+		- "Many client-specific interfaces are better than one general-purpose interface."
+		- An interface should be dependent more on the code that calls it rather than the code that implements it.
+		- Therefore, a class should be implementing different interfaces created based on the different types of clients.
+		- Each of these interfaces might have common methods as well.
+
+	5. Dependency Inversion principle:
+		- "Depend upon abstractions, [not] concretions."
+		- The dependencies are inverted as the concrete classes depend upon abstractions instead of being dependent upon by other classes.
+
+We should also note these point:
+	- Make sure that classes interact with each other through interfaces.
+	- Create small classes that do a single thing.
+	- Create small interfaces such that a class only has to implement functionalities that it should.

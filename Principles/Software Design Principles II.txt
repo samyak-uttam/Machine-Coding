@@ -1,0 +1,46 @@
+Some other popular and useful design principles:
+
+1. Hide Implementation Details:
+	- It helps to make changes in a component without making changes in other modules/clients using that component.
+	- It can be achieved by creating interfaces.
+	- Encapsulation with proper access management should also be done to expose only the required public functions.
+
+2. Separation of Concerns:
+	- It includes separating a computer program into distinct section such that each section addresses a separate concern.
+	- Such a program is called modular program. Modularity, is achieved by creating well-encapsulated classes that have
+	  well defined interfaces.
+
+3. Maximize Cohesion:
+	- Cohesion is the degree to how strongly related and focused are the various responsibilities of a module.
+	- High cohesion results in better understanding, maintaining, and reusing components.
+	- Cohesion is increased if:
+		-> The functionalities embedded in a class, accessed through its methods, have much in common.
+		-> Methods carry out a small number of related activities, by avoiding coarsely grained or unrelated sets of data.
+		-> Related methods are in the same source file or otherwise grouped together; for example, 
+		   in separate files but in the same sub-directory/folder.
+
+4. Minimize Coupling:
+	- Coupling is the degree to which each module depends on other modules.
+	- Coupling is usually contrasted with cohesion. Low coupling often correlates with high cohesion and vice versa.
+	- Coupling can be reduced by:
+		-> By hiding inner details and interacting through interfaces.
+		-> Avoid interacting with classes that it can avoid directly dealing with.
+	- Components in a loosely coupled system can be replaced with alternative implementations that provide the same services.
+
+5. Law of Demeter/Principle of Least Knowledge:
+	- Code components should only talk to its direct relations and not to strangers.
+	- The Law of Demeter for functions requires that a method m of an object a may only invoke the methods of the 
+	  following kinds of objects:
+		-> a itself
+		-> m's parameters
+		-> any object instantiated within m
+		-> a's attributes
+		-> global variables accessible by a in the scope of m
+	- In particular, an object should avoid invoking methods of an object returned by another method.
+	- For many modern object-oriented languages that use a dot as a field identifier, the law can be stated simply as "use only one dot".
+	- ex: a.m().n() breaks the law where a.m() does not.
+
+6. Command-Query Separation:
+	- CQS states that every method should either be a command that performs an action, or a query that returns data to the caller,
+	  but not both.
+	- Query: Returns a result without changing the state. Command: Changes the state but does not return any value.

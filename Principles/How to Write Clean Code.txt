@@ -1,0 +1,54 @@
+How to Write Clean Code:
+	- Give meaningful names to variables, functions, classes, and other entities in the code.
+	- Create functions that are small and do a single thing.
+	- Encapsulate related data and functions into samll independent classes.
+	- Structure the code for better redability. Keep related code together and keep the lines smaller.
+	- Enhance redability with proper comments
+	- Write redable, fast, independent, and repeatable tests.
+	
+1. Follow these rules to create meaningful variables, functions, and classes:
+	- Use Intention-Revealing names
+		ex: int courseDurationInDays; boolean isCellVisited;
+	- Name Functions as Verbs
+	- Name Classes as Nouns
+	- Use Meaningful distinction
+	- Use Pronounceable names
+		ex: Date modDateYYMMDD; (Wrong way)
+			Date modificationTimestamp; (Correct way)
+	- Use Searchable names. Using small names or constant values might make it difficult to search.
+	- Avoid Encodings
+	- Avoid naming variables in Number-series
+		ex: int[] arr1; int[] arr2;
+	- Avoid Noise words like, Data, Value, Info, Variable, Table, String, Object, etc which are
+	  used as a suffix as they do not offer any meaningful distinction.
+		ex: class Product {} (Correct way)
+			class ProductInfo {} (Wrong way)
+	- Avoid Magic numbers. Create named constants instead of using numbers or constant values directly.
+	- Avoid short names. Smaller names should only be used in variables inside short functions (for
+	  temporary use) where it has no meaning/use outside the said function.
+
+2. Designing Good Functions:
+	A good function should have the following properties:
+		- Should be small
+		- Should do just one thing. In general, all things in a function should be at the same abstraction 
+		  level. A function should not have both lower-level and higher-level details.
+		- Should have fewer arguments. Should be <= 3, Lower the better.
+		  In most cases, set of related arguments used across functions deserves a class of its own.
+		- Should not have side effects
+		  ex: Changing the parameters/class properties in a get/query method.
+		 - Try to extract smaller function from one, till no more can be extracted.
+
+3. Designing Good Classes:
+	Follow these rules that help us design better classes:
+		- Organised and Encapsulated
+			A class should be ordered like this:
+				-> Start with the variables
+					a. public static constants
+					b. followed by private static attributes
+					c. followed by private instance attributes
+				-> followed by public functions
+				-> private utility function just after the public function that calls it
+		- Should be small and should do just one thing
+		- Small number of instance variables
+			-> A class should have strong cohesion, i.e., the functions of a class should be strongly
+			   related in supporting a single central purpose.
