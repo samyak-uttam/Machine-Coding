@@ -59,7 +59,7 @@ public class MoveValidator {
 			} else {
 				int i = x1 < x2 ? x1 + 1 : x2 + 1;
 				int j = y1 > y2 ? y1 - 1 : y2 - 1;
-				for (; i < Math.max(x1, x2) && j < Math.min(y1, x2); i++, j--) {
+				for (; i < Math.max(x1, x2) && j > Math.min(y1, y2); i++, j--) {
 					if (board.getSpot(i, j).getPiece() != null)
 						return false;
 				}

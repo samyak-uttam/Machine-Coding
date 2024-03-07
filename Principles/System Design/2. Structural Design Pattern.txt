@@ -1,0 +1,357 @@
+Structural Design Pattern:
+	- Structural Design Patterns are concerned with how classes and objects are composed to form larger structures. 
+	- Structural class patterns use inheritance to compose interfaces or implementations.
+
+Types of Structural Design Pattern:
+	1. Decorator Pattern:
+		- This pattern helps to add more functionality to existing object, without changing its structure.
+		- Decorators provide a flexible alternative to subclassing for extending functionality.
+		ex:
+			abstract class BasePizza {
+				String description = "Unknown Pizza";
+				public String getDescription() {
+					return description;
+				}
+				abstract int cost();
+			}
+			class FarmhousePizza extends BasePizza {
+				public FarmhousePizza() { description = "Farmhouse"; }
+				public int cost() { return 200; }
+			}
+			class MargheritaPizza extends BasePizza {
+				public MargheritaPizza() { description = "Margherita"; }
+				public int cost() { return 100; }
+			}
+			abstract ToppingDecorator extends BasePizza {
+				public abstract String getDescription();
+			}
+			class ExtraCheese extends ToppingDecorator {
+				BasePizza basePizza;
+				public ExtraCheese(BasePizza basePizza) { this.basePizza = basePizza; }
+				public String getDescription() { return basePizza.getDescription() + ", Extra Cheese"; }
+				public int cost() { return basePizza.cost() + 15; }
+			}
+			class FreshTomato extends ToppingDecorator {
+				BasePizza basePizza;
+				public FreshTomato(BasePizza basePizza) { this.basePizza = basePizza; }
+				public String getDescription() { return basePizza.getDescription() + ", Fresh Tomato"; }
+				public int cost() { return basePizza.cost() + 10; }
+			}
+			class PizzaStore {
+				public static void main(String[] args) {
+					BasePizza margherita = new Margherita();
+					System.out.println(margherita.getDescription() + " Cost: " + margherita.cost());
+					BasePizza farmhouse = new FarmhousePizza();
+					farmhouse = new FreshTomato(farmhouse);
+					farmhouse = new ExtraCheese(farmhouse);
+					System.out.println(farmhouse.getDescription() + " Cost: " + farmhouse.cost());
+				}
+			}
+			- Here FarmhousePizza, MargheritaPizza, ToppingDecorator "is-a" BasePizza
+			- FreshTomato, ExtraCheese "is-a" ToppingDecorator and "has-a" BasePizza
+
+	2. Proxy Pattern:
+		- It provides a placeholder for another object to control access to it.
+		- It is useful when we want to add an extra layer of control over access to an object.
+		- The proxy acts as an intermediary , controlling access to the real object.
+		- As in the decorator pattern, proxies can be chained together.
+		
+		Uses:
+			- Remote Proxy: When object to be represented in remote.
+			- Virtual Proxy: When real object can take some time to produce result. So proxy class will send dummy response, and will
+							 push real response later when it comes.
+			- Protection Proxy: Wrapper implementing locks on resources.
+			- Smart Proxy: Additional layer of security to the real object.
+		ex:
+			interface Image {
+				void display();
+			}
+			public RealImage(String fileName) {
+				this.fileName = fileName;
+				loadImageFromDisk();
+			}
+			private void loadImageFromDisk() {
+				System.out.println("Loading Image: " + fileName);
+			}
+			public void display() {
+				System.out.println("Displaying Image: " + fileName);
+			}
+			class ProxyImage implements Image {
+				private RealImage realImage;
+				private String fileName;
+				public ProxyImage(String fileName) {
+					this.fileName = fileName;
+				}
+				public void display() {
+					if(realImage == null) {
+						realImage = new RealImage(fileName);
+					}
+					realImage.display();
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					Image image = new ProxyImage("example.jpg");
+					image.display();
+					image.display();
+				}
+			}
+
+	3. Composite Pattern:
+		- It lets you compose objects into tree-like structures to represent part-whole hierarchies.
+		- It allows clients to treat individual objects and composition of objects uniformly.
+		- Used when client need to ignore the difference between composition of objects and individual objects.
+		ex:
+			public interface Task {
+				void display();
+			}
+			// Simple Task (Leaf)
+			public class SimpleTask implements Task {
+				private String title;
+				public SimpleTask(String title) {
+					this.title = title;
+				}
+				@Override
+				public void display() {
+					System.out.println("Simple Task: " + title);
+				}
+			}
+			// Task List (Composite)
+			public class TaskList implements Task {
+				private String title;
+				private List<Task> tasks;
+				public TaskList(String title) {
+					this.title = title;
+					this.tasks = new ArrayList<>();
+				}
+				public void addTask(Task task) {
+					tasks.add(task);
+				}
+				@Override
+				public void display() {
+					System.out.println("Task List: " + title);
+					for (Task task : tasks)
+						task.display();
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					Task simpleTask1 = new SimpleTask("Complete Coding");
+					Task simpleTask2 = new SimpleTask("Write Documentation");
+					
+					TaskList projectTasks = new TaskList("Project Tasks");
+					projectTasks.addTask(simpleTask1);
+					projectTasks.addTask(simpleTask2);
+					projectTasks.display();
+				}
+			}
+
+	4. Adapter Pattern:
+		- It allows the interface of an existing class to be used as another interface.
+		- It acts as a bridge between two compatible interfaces, making them work together.
+		- This pattern involves a single class, known as adapter, which is responsible for joining functionalities of independent
+		  or incompatible interfaces.
+		ex:
+			public interface WeightMachine {
+				int getWeightInPounds();
+			}
+			public class WeightMachineImpl implements WeightMachine {
+				int getWeightInPounds() {
+					return 30;
+				}
+			}
+			public interface WeightMachineAdaptor {
+				int getWeightInKg();
+			}
+			public class WeightMachineAdaptorImpl implements WeightMachineAdaptor {
+				WeightMachine machine;
+				WeightMachineAdaptorImpl(WeightMachine machine) {
+					this.machine = machine;
+				}
+				int getWeightInKg() {
+					int weightInPound = machine.getWeightInPounds();
+					return weightInPound * 0.45;
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					WeightMachineAdaptor machineAdaptor = new WeightMachineAdaptorImpl(new WeightMachineImpl());
+					System.out.println(machineAdaptor.getWeightInKg());
+				}
+			}
+
+	5. Bridge Design Pattern:
+		- Allows the absraction and the implementation to be developed independently and the client code can access only the Abstraction
+		  part without being concerned about the Implementation part.
+		- The absraction is an interface or abstract class and the implementer is also an interface or abstract class.
+		- The absraction contains a reference to the implementer. Children of the abstraction are referred to as refined abstractions, and children 
+		  of the implementer are concrete implementers.
+		- It increases the loose coupling between class abstraction and it’s implementation.
+		ex:
+			abstract class Vehicle {
+				protected Workshop workshop1;
+				protected Workshop workshop2;
+				protected Vehicle(workshop1, workshop2) {
+					this.workshop1 = workshop1;
+					this.workshop2 = workshop2;
+				}
+				abstract public void manufacture();
+			}
+			class Car extends Vehicle {
+				public Car(Workshop workshop1, Workshop workshop2) {
+					super(workshop1, workshop2);
+				}
+				@Override
+				public void manufacture() {
+					System.out.println("Car");
+					workshop1.work();
+					workshop2.work();
+				}
+			}
+			class Bike extends Vehicle {
+				public Bike(Workshop workshop1, Workshop workshop2) {
+					super(workshop1, workshop2);
+				}
+				@Override
+				public void manufacture() {
+					System.out.println("Bike");
+					workshop1.work();
+					workshop2.work();
+				}
+			}
+			interface Workshop {
+				abstract public void work();
+			}
+			class Produce implements Workshop {
+				@Override
+				public void work() {
+					System.out.println("Produced");
+				}
+			}
+			class Assemble implements Workshop {
+				@Override
+				public void work() {
+					System.out.println("Assembled");
+				}
+			}
+			class Client {
+				public static void main(String[] args) {
+					Vehicle vehicle = new Car(new Produce(), new Assemble());
+					vehicle.manufacture();
+				}
+			}
+
+	6. Facade Design Pattern:
+		- It provides a unified interface to a set of interface in a subsystem. It defines a high-level interface that makes the subsystem easier to use.
+		- Hides the complex system implementation from the user and provides APIs only to perform the main goal.
+		ex:
+			public interface Hotel {
+				public Menu getMenus();
+			}
+			public class NogVegRestaurant implements Hotel {
+				public Menu getMenus() {
+					NonVegMenu nv = new NonVegMenu();
+					return nv;
+				}
+			}
+			public class VegRestaurant implements Hotel {
+				public Menu getMenus() {
+					VegMenu v = new VegMenu();
+					return v;
+				}
+			}
+			public class VegNonBothRestaurant implements Hotel {
+				public Menu getMenus() {
+					Both b = new Both();
+					return b;
+				}
+			}
+			public interface HotelKeeper {
+				public VegMenu getVegMenu();
+				public NonVegMenu getNonVegMenu();
+				public Both getVegNonMenu();
+			}
+			public class HotelKeeperImplementation implements HotelKeeper {
+				public VegMenu getVegMenu() {
+					VegRestaurant v = new VegRestaurant();
+					reutrn = (VegMenu)v.getMenus();
+				}
+				public NonVegMenu NogVegRestaurant() {
+					NogVegRestaurant v = new VegRestaurant();
+					reutrn = (NonVegMenu)v.getMenus();
+				}
+				public Both getVegNonMenu() {
+					VegNonBothRestaurant v = new VegNonBothRestaurant();
+					reutrn = (Both)v.getMenus();
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					HotelKeeper keeper = new HotelKeeperImplementation();
+					VegMenu v = keeper.getVegMenu();
+					NonVegMenu nv = keeper.getNonVegMenu();
+					Both b = keeper.getVegNonMenu();
+				}
+			}
+
+	7. Flyweight Pattern:
+		- Used when we need to create very large number of objects with some intrinsic properties in common.
+		- Without using this, we might get out of memory error.
+		- We can cache the objects with same intrinsic properties & return the object after updating the non intrinsic values, at the time of query.
+		- Intrinsic data: data shared among objects and remain same once defined one value.
+		- Extrinsic data: change based on client input and differs from one object to another.
+		ex:
+			public interface Robot {
+				void display(int x, int y);
+			}
+			public HumanoidRobot implements Robot {
+				String type;
+				Sprite body;
+				Humanoid(String type, Sprite body) {
+					this.type = type;
+					this.body = body;
+				}
+				void display(int x, int y) {
+					System.out.println("Humanoid Robot is displayed at x, y coordinate);
+				}
+			}
+			public RoboticDog implements Robot {
+				String type;
+				Sprite body;
+				RoboticDog(String type, Sprite body) {
+					this.type = type;
+					this.body = body;
+				}
+				void display(int x, int y) {
+					System.out.println("Robotic Dog is displayed at x, y coordinate);
+				}
+			}
+			public class RobotFactory {
+				static Map<String, Robot> roboticObjectCache = new HashMap<>();
+				static Robot createRobot(String robotType) {
+					if(roboticObjectCache.containsKey(robotType) {
+						return roboticObjectCache.get(robotType);
+					} else if(robotType.equals("Humanoid")) {
+						Sprite humanoidSprite = new Sprite();
+						Robot humanRobotObj = new HumanoidRobot(robotType, humanoidSprite);
+						roboticObjectCache.put(robotType, humanRobotObj);
+						return humanRobotObj;
+					} else if(robotType.equals("RoboticDog")) {
+						Sprite roboticDogSprite = new Sprite();
+						Robot roboticDogObj = new HumanoidRobot(robotType, roboticDogSprite);
+						roboticObjectCache.put(robotType, roboticDogObj);
+						return roboticDogObj;
+					} else {
+						return null;
+					}
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					Robot humanoidRobot1 = RobotFactory.createRobot("Humanoid");
+					humanoidRobot1.display(1, 2);
+					
+					Robot roboticDog1 = RobotFactory.createRobot("RoboticDog");
+					roboticDog1.display(10, 20);
+				}
+			}

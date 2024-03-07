@@ -5,29 +5,56 @@ The SOLID principles are:
 	1. Single-responsibility principle: 
 		- "There should never be more than one reason for a class to change."
 		- In other words, every class should have only one responsibility.
+		- Every module or class should have responsibility over a single part of the functionality provided by the software,
+		  and that responsibility should be entirely encapsulated by the class.
 		- Having multiple reasons to change means that the module has high coupling.
 		- The more responsibilities your class has, the more often you'll change it.
+		ex: A User class can have the responsibility to handle all user related operations.
 
 	2. Open-Closed principle:
-		- "Software entities ... should be open for extension, but closed for modification."
+		- "Software entities should be open for extension, but closed for modification."
 		- A class should be extensible, i.e., we should be able to make a class behave in different ways as new requirements come.
 		- The extension should happen without any modification to the class.
 		- This can be achieved through abstraction, i.e., by creating interfaces.
 		- Interfaces should not change based on new requirements, and new requirements can be taken care of by implementing classes.
+		ex: Feature 1 & 2 can implement a interface, and when a new feature 3 will come, that can implement interface without
+			affecting feature 1 & 2.
 
 	3. Liskov substitution principle:
 		- "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it".
+		- Objects in a program should be replacable with instances of their subtypes without altering the correctness of the program.
 		- A client using a base class should continue to function properly even if a derived class is passed to it.
+		ex: Parent obj = new Child1();
+			obj = new Child2();
+			- After this reassignment also, all functionalities of obj should work as expected. 
 
 	4. Interface Segregation principle:
 		- "Many client-specific interfaces are better than one general-purpose interface."
+		- No client should be forced to depend on the methods it doesn't use.
 		- An interface should be dependent more on the code that calls it rather than the code that implements it.
 		- Therefore, a class should be implementing different interfaces created based on the different types of clients.
 		- Each of these interfaces might have common methods as well.
+		ex: - Duck class having methods: fly(), quack(), and swim().
+			- Three child classes: Wild Duck, Red Duck, and Rubber Duck.
+			- Now a Rubber Duck cannot fly or quack in any case so Rubber Duck implementing Duck will throw error in these 2 methods.
+			- For solving it, we can create two more interfaces: Real Duck and Fake Duck implementing Duck, and the 3 types of ducks
+			  can implement these two interfaces.
 
 	5. Dependency Inversion principle:
-		- "Depend upon abstractions, [not] concretions."
+		- "Depend upon abstractions, not concretions."
 		- The dependencies are inverted as the concrete classes depend upon abstractions instead of being dependent upon by other classes.
+		- High level objects should not depend on low level implementations.
+		- High level module is the interface/abstraction that will be consumed directly bt the presentation layer.
+		  Low level on the other hand are bunch of small modules(subsystems) that help the high level do their work.
+		ex: There is a Keyboard interface with various implementations like Wireless Keyboard, Wired Keyboard, Gaming Keyboard, etc.
+			Now a Computer class should use the Keyboard interface as a field not any of the implementations for avoiding coupling.
+			class computer {
+				Keyboard keyboard;
+				Computer(Keyboard keyboard) {
+					this.keyboard = keyboard;
+				}
+			}
+			Here the computer class field keyboard can be any of the three types.
 
 We should also note these point:
 	- Make sure that classes interact with each other through interfaces.

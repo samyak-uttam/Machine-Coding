@@ -1,0 +1,338 @@
+Design Patterns:
+	- Design patterns are basically defined as reusable solutions to the common problems that arise during software design and development.
+	- They are general templates or best practices that guide developers in creating well-structured, maintainable, and efficient code.
+
+Types of Design Patterns:
+	Creational, Structural, and Behavioral
+
+Creational Design Pattern:
+	- Creational design patterns abstract the instantiation process.
+	- They help make a system independent of how its objects are created, composed, and represented.
+
+Types of Creational Design Patterns:
+	1. Prototype Method Design Pattern:
+		- Prototype allows us to hide the complexity of making new instances from the client.
+		- Copy an existing object rather than creating a new instance from scratch, something that may include costly operations.
+		- Prototype patterns are required when object creation is a time-consuming, and costly operation, so we create objects with the existing object itself.
+		- Java has a built in clone() method present in Clonable interface, which can be used.
+		- However we can write a clone() method of our own as well to provide custom implementation.
+		
+		ex:
+			// prototype interface or abstract class ensuring that all prototypes can be cloned in a consistent manner
+			interface Shape {
+				Shape clone();
+				void draw();
+			}
+			// concrete prototype representing a specific type of object that you want to clone
+			class Circle implements Shape {
+				private String color;
+				public Circle(String color) {
+					this.color = color;
+				}
+				@Override
+				public Shape clone() {
+					return new Circle(this.color);
+				}
+				@Override void draw() {
+					System.out.println("Drawing a " + color + " circle.");
+				}
+			}
+			// it initiates the cloning process without being aware of the concrete classes involved
+			class ShapeClient {
+				private Shape shapePrototype;
+				public ShapeClient(Shape shapePrototype) {
+					this.shapePrototype = shapePrototype;
+				}
+				public Shape createShape() {
+					return shapePrototype.clone();
+				}
+			}
+			public class PrototypeExample {
+				public static void main(String[] args) {
+					Shape circlePrototype = new Circle("red");
+					ShapeClient client = new ShapeClient(circlePrototype);
+					Shape redCircle = client.createShape();
+					redCircle.draw();
+				}
+			}
+
+	2. Singleton Pattern:
+		- It is one of the simplest design patterns, ensuring a class only has one instance, and provided a global point of access to it.
+		- Used to limit the number of objects for a class to 1.
+		- Mainly used in applications like Database Connections, Configuration Management, Device Mangers, Printing Service, etc.
+		- 4 ways to achieve this:
+			a. Eager Initialization:
+				- In this the class or data member is initialized whether it is used or not.
+				ex:
+					class Singleton {
+						private Singleton obj = new Singleton();
+						private Singleton() {}
+						public static Singleton getInstance() { return obj; }
+					}
+			b. Lazy Initialization:
+				- In this the class or data member is initialized only when required.
+				ex:
+					class Singleton {
+						private static Singleton obj;
+						private Singleton() {}
+						public static Singleton getInstance() {
+							if(obj == null)
+								obj = new Singleton();
+							return obj;
+						}
+					}
+				- But this approach is not safe for multi-threading. If two threads come at the same time then the obj would be null for both
+				  and two objects for singleton will be created.
+			c. Synchronized method:
+				- We can use synchronized to make sure that only one thread at a time can execute getInstance().
+				ex:
+					class Singleton {
+						private static Singleton obj;
+						private Singleton() {}
+						public static synchronized Singleton getInstance() {
+							if(obj == null)
+								obj = new Singleton();
+							return obj;
+						}
+					}
+				- But the problem here is using synchronized everytime while accessing the instance is expensive and may decrease the performance.
+			d. Double Checked Locking:
+				- The synchronization is only need for creating the object so we can modify it and achieve better performance
+				ex:
+					class Singleton {
+						private static Singleton obj;
+						private Singleton() {}
+						public static Singleton getInstance() {
+							if(obj == null) {
+								synchronized(Singleton.class) {
+									// check again as multiple threads can reach above step
+									if(obj == null)
+										obj = new Singleton();
+								}
+							}
+							return obj;
+						}
+					}
+
+	3. Factory Method Pattern:
+		- This pattern is used to create objects without specifying the exact class of object that will be created.
+		- It is used when all the object creation and its business logic we need to keep at one place.
+		- The idea is to create a factory class with a single responsibility to create objects, hiding the details of class modules from the user.
+		ex:
+			enum VehicleType {
+				VT_TwoWheeler,
+				VT_ThreeWheeler,
+				VT_FourWheeler
+			}
+			abstract class Vehicle {
+				abstract public void printVehicleInfo();
+			}
+			class TwoWheeler extends Vehicle {
+				public void printVehicleInfo() {
+					System.out.println("I am two wheeler");
+				}
+			}
+			class ThreeWheeler extends Vehicle {
+				public void printVehicleInfo() {
+					System.out.println("I am three wheeler");
+				}
+			}
+			class FourWheeler extends Vehicle {
+				public void printVehicleInfo() {
+					System.out.println("I am four wheeler");
+				}
+			}
+			class VehicleFactory {
+				Vehicle build(VehicleType vehicleType) {
+					if(VehicleType.VT_TwoWheeler == vehicleType)
+						return new TwoWheeler();
+					else if(VehicleType.VT_ThreeWheeler == vehicleType)
+						return new ThreeWheeler();
+					else if(VehicleType.VT_FourWheeler == vehicleType)
+						return new FourWheeler();
+					return null;
+				}
+			}
+			class Client {
+				private Vehicle pVehicle;
+				Client() { pVehicle = null; }
+				void BuildVehicle(VehicleType vehicleType) {
+					VehicleFactory vf = new VehicleFactory();
+					pVehicle = vf.build(vehicleType);
+				}
+				Vehicle getVehicle() { return pVehicle; }
+			}
+			public class Driver {
+				public static void main(String[] args) {
+					Client client = new Client();
+					client.BuildVehicle(VehicleType.VT_TwoWheeler);
+					client.getVehicle().printVehicleInfo();
+					
+					client.BuildVehicle(VehicleType.ThreeWheeler);
+					client.getVehicle().printVehicleInfo();
+					
+					client.BuildVehicle(VehicleType.FourWheeler);
+					client.getVehicle().printVehicleInfo();
+				}
+			}
+			Output:
+				I am two wheeler
+				I am three wheeler
+				I am four wheeler
+
+	4. Abstract Factory Pattern:
+		- It provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+		- It conaitns a super-factory which create other factories. The super factory is called factory of factories.
+		- So at runtime, the abstract factory is coupled with any desired concrete factory which can create objects of the desired type.
+		ex:
+			public interface AbstractFactory {
+				public Car getInstance(int price);
+			}
+			public class EconomicCarFactory implements AbstractFactory {
+				@Override
+				public Car getInstance(int price) {
+					if(price <= 300000)
+						return new EconomicCar1();
+					else if(price > 300000)
+						return new EconomicCar2();
+					return null;
+				}
+			}
+			public class LuxuryCarFactory implements AbstractFactory {
+				@Override
+				public Car getInstance(int price) {
+					if(price >= 1000000 && price <= 2000000)
+						return new LuxuryCar1();
+					else if(price > 2000000)
+						return new LuxuryCar2();
+					return null;
+				}
+			}
+			public class AbstractFactoryProducer {
+				public AbstractFactory getFactoryInstance(String value) {
+					if(value.equals("Economic"))
+						return new EconomicCarFactory();
+					else if(value.equals("Luxury") || value.equals("Premium"))
+						return new LuxuryCarFactory();
+					return null;
+				}
+			}
+			public interface Car {
+				public int getTopSpeed();
+			}
+			public class EconomicCar1 implements Car {
+				@Override
+				public int getTopSpeed() {
+					return 100;
+				}
+			}
+			public class EconomicCar2 implements Car {
+				@Override
+				public int getTopSpeed() {
+					return 150;
+				}
+			}
+			public class LuxuryCar1 implements Car {
+				@Override
+				public int getTopSpeed() {
+					return 250;
+				}
+			}
+			public class LuxuryCar2 implements Car {
+				@Override
+				public int getTopSpeed() {
+					return 300;
+				}
+			}
+			public class Driver {
+				public static void main(String[] args) {
+					AbstractFactoryProducer abstractFactoryProducerObj = new AbstractFactoryProducer();
+					AbstractFactory abstractFactoryObj = new abstractFactoryProducerObj.getFactoryInstance("Premium");
+					Car carObj = abstractFactoryObj.getInstance(5000000);
+					System.out.println(carObj.getTopSpeed());
+				}
+			}
+
+	5. Builder Pattern:
+		- It is used to construct a complex object step by step.
+		- It allows the construction of a product in a step-by-step fashion, where the construction process can vary based on the type of product being built.
+		ex:
+			public class Student {
+				int rollNumber;
+				int age;
+				String name;
+				List<String> subjects;
+				public Student(StudentBuilder builder) {
+					this.rollNumber = builder.rollNumber;
+					this.age = builder.age;
+					this.name = builder.name;
+					this.subjects = builder.subjects;
+				}
+				public String toString() {
+					return "" + "roll number: " + this.rollNumber + 
+							" age: " + this.age + 
+							" name: " + this.name +
+							"subjects: " + subjects.get(0) + ", " + subjects.get(1) + ", " + subjects.get(2);
+				}
+			}
+			public class StudentBuilder {
+				int rollNumber;
+				int age;
+				String name;
+				List<String> subjects;
+				public StudentBuilder setRollNumber(int rollNumber) {
+					this.rollNumber = rollNumber;
+					return this;
+				}
+				public StudentBuilder setAge(int age) {
+					this.age = age;
+					return this;
+				}
+				public StudentBuilder setName(int name) {
+					this.name = name;
+					return this;
+				}
+				abstract public StudentBuilder setSubjects();
+				public Student build() { return new Student(this); }
+			}
+			public class MBAStudentBuilder extends StudentBuilder {
+				@Override
+				public StudentBuilder setSubjects() {
+					List<String> subs = new ArrayList<>();
+					subs.add("Micro Economics");
+					subs.add("Business Studies");
+					subs.add("Operations Management");
+					this.subjects = subs;
+					return this;
+				}
+			}
+			public class EngineeringStudentBuilder extends StudentBuilder {
+				@Override
+				public StudentBuilder setSubjects() {
+					List<String> subs = new ArrayList<>();
+					subs.add("DSA");
+					subs.add("OS");
+					subs.add("Computer Architecture");
+					this.subjects = subs;
+					return this;
+				}
+			}
+			public class Director {
+				StudentBuilder studentBuilder;
+				Director(StudentBuilder studentBuilder) { this.studentBuilder = studentBuilder; }
+				public Student createStudent() {
+					return StudentBuilder.setRollNumber(1).setAge(22).setName("Ramesh").setSubjects().build();
+				}
+			}
+			public class Driver {
+				public static void main(String[] args) {
+					Director directorObj1 = new Director(new EngineeringStudentBuilder());
+					Director directorObj2 = new Director(new MBAStudentBuilder());
+					
+					Student engineerStudent = directorObj1.createStudent();
+					Student mbaStudent = directorObj2.createStudent();
+					
+					System.out.println(engineerStudent.toString());
+					System.out.println(mbaStudent.toString());
+				}
+			}
