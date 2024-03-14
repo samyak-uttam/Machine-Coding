@@ -1,0 +1,334 @@
+Behavioral Design Pattern:
+	- Behavioral Patterns are concerned with algorithms and the assignment of responsibilities between objects.
+	- Behavioral patterns describe not just patterns of objects or classes but also the patterns of communication between them.
+	- These patterns characterize complex control flow that’s difficult to follow at run-time.
+
+Types of Behavioral Design Pattern:
+	1. Chain of Responsibility Design Pattern:
+		- It allows an object to pass a request along a chain of handlers. Each handler in the chain decides either to process the request or to pass it along the chain to the next handler.
+		- It allows an object to send a request to other objects without knowing who is going to handle it.
+		- It encourages loose coupling between sender and receiver, providing freedom in handling the request.
+		ex:
+			enum Priority {
+				BASIC, INTERMEDIATE, CRITICAL
+			}
+			public class Request {
+				private Priority priority;
+				public Request(Priority priority) {
+					this.priority = priority;
+				}
+				public Priority getPriority() {
+					return priority;
+				}
+			}
+			public interface Handler {
+				void handleRequest(Request request);
+				void setNextHandler(Handler nextHandler);
+			}
+			public abstract class AbstractHandler implements Handler {
+				protected Handler nextHandler;
+				public void setNextHandler(Handler nextHandler) {
+					this.nextHandler = nextHandler;
+				}
+			}
+			public class Level1Handler implements AbstractHandler {
+				@Override
+				public void handleRequest(Request request) {
+					if(request.getPriority() == Priority.BASIC)
+						System.out.println("Level 1 support handled the request.");
+					else if(nextHandler != null)
+						nextHandler.handleRequest(request);
+				}
+			}
+			public class Level2Handler implements AbstractHandler {
+				@Override
+				public void handleRequest(Request request) {
+					if(request.getPriority() == Priority.INTERMEDIATE)
+						System.out.println("Level 2 support handled the request.");
+					else if(nextHandler != null)
+						nextHandler.handleRequest(request);
+				}
+			}
+			public class Level3Handler implements AbstractHandler {
+				@Override
+				public void handleRequest(Request request) {
+					if(request.getPriority() == Priority.CRITICAL)
+						System.out.println("Level 3 support handled the request.");
+					else
+						System.out.println("Request cannot be handled");
+				}
+			}
+			public class Driver {
+				public static void main(String[] args) {
+					Handler level1Handler = new Level1Handler();
+					Handler level2Handler = new Level1Handler();
+					Handler level3Handler = new Level1Handler();
+					
+					level1Handler.setNextHandler(level2Handler);
+					level2Handler.setNextHandler(level3Handler);
+					
+					Request request = new Request(Priority.CRITICAL);
+					level1Handler.handleRequest(request);
+				}
+			}
+
+	2. Command Design Pattern:
+		- It turns a request into a stand-alone object, allowing parameterization of clients with different requests, queuing of requests, and support for undoable operations
+		  (action or a series of actions that can be reversed or undone in a system)
+		- It decouples the sender (client or invoker) from the receiver (object performing the operation), providing flexibility and extensibility.
+		ex:
+			// Command interface
+			public interface Command {
+				void execute();
+			}
+			public class TurnOnCommand implements Command {
+				private Device device;
+				public TurnOnCommand(Device device) {
+					this.device = device;
+				}
+				@Override
+				public void execute() {
+					device.turnOn();
+				}
+			}
+			public class TurnOffCommand implements Command {
+				private Device device;
+				public TurnOffCommand(Device device) {
+					this.device = device;
+				}
+				@Override
+				public void execute() {
+					device.turnOff();
+				}
+			}
+			public class AdjustVolumeCommand implements Command {
+				private Stereo stereo;
+				public AdjustVolumeCommand(Stereo stereo) {
+					this.stereo = stereo;
+				}
+				@Override
+				public void execute() {
+					stereo.adjustVolume();
+				}
+			}
+			// Receiver interface
+			public interface Device {
+				void turnOn();
+				void turnOff();
+			}
+			public class TV implements Device {
+				@Override
+				public void turnOn() {
+					System.out.println("TV in now on");
+				}
+				@Override
+				public void turnOn() {
+					System.out.println("TV in now off");
+				}
+			}
+			public class Stereo implements Device {
+				@Override
+				public void turnOn() {
+					System.out.println("Stereo in now on");
+				}
+				@Override
+				public void turnOn() {
+					System.out.println("Stereo now off");
+				}
+				public void adjustVolume() {
+					System.out.println("Volume adjusted");
+				}
+			}
+			// Invoker
+			public class RemoteControl {
+				private Command command;
+				public void setCommand(Command command) {
+					this.command = command;
+				}
+				public void pressButton() {
+					command.execute();
+				}
+			}
+			public class Driver {
+				public static void main(String[] args) {
+					TV tv = new TV();
+					Stereo stereo = new Stereo();
+					
+					Command turnOnTvCommand = new TurnOnCommand(tv);
+					Command turnOffTvCommand = new TurnOffCommand(tv);
+					Command adjustVolumeStereoCommand = new AdjustVolumeCommand(stereo);
+					
+					RemoteControl remote = new RemoteControl();
+					
+					remote.setCommand(turnOnTvCommand);
+					remote.pressButton();
+					remote.setCommand(adjustVolumeStereoCommand);
+					remote.pressButton();
+					remote.setCommand(turnOffTvCommand);
+					remote.pressButton();
+				}
+			}
+
+	3. Strategy Design Pattern:
+		- It defines a family of algorithms, encapsulates each one, and makes them interchangeable, allowing clients to switch algorithms dynamically without altering the code structure.
+		- It allows the behavior of an object to be selected at runtime, and lets the algorithm vary independently from clients that use it.
+		ex:
+			public interface SortingStrategy {
+				void sort(int[] array);
+			}
+			public class SortingContext {
+				private SortingStrategy sortingStrategy;
+				public SortingContext(SortingStrategy sortingStrategy) {
+					this.sortingStrategy = sortingStrategy;
+				}
+				public void setSortingStrategy(SortingStrategy sortingStrategy) {
+					this.sortingStrategy = sortingStrategy;
+				}
+				public void performSort(int[] array) {
+					sortingStrategy.sort(array);
+				}
+			}
+			public class BubbleSortStrategy implements SortingStrategy {
+				@Override
+				public void sort(int[] array) {
+					System.out.println("Sorting using bubble sort");
+				}
+			}
+			public class MergeSortStrategy implements SortingStrategy {
+				@Override
+				public void sort(int[] array) {
+					System.out.println("Sorting using merge sort");
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					SortingContext sortingContext = new SortingContext(new BubbleSortStrategy());
+					int[] array = {5, 2, 9, 1, 5};
+					sortingContext.performSort(array);
+					sortingContext.setSortingStrategy(new MergeSortStrategy());
+					sortingContext.performSort();
+				}
+			}
+	
+	4. Iterator Design Pattern:
+		- It is a relatively simple and frequently used design pattern.
+		- Provides a uniform way to access different collections of objects whithout exposing implementation details of the collection.
+		ex:
+			class Notification {
+				String notification;
+				public Notification(String notification) {
+					this.notification = notification;
+				}
+				public String getNotification() {
+					return notification;
+				}
+			}
+			interface Collection {
+				public Iterator createIterator();
+			}
+			class NotificationCollection implements Collection {
+				static final int MAX_ITEMS = 6;
+				int numberOfItems = 0;
+				List<Notification> notificationList;
+				public NotificationCollection() {
+					notificationList = new ArrayList<>();
+					addItem("Notification 1");
+					addItem("Notification 2");
+				}
+				public void addItems(String str) {
+					notificationList.add(new Notification(str));
+				}
+				public Iterator createIterator() {
+					return new NotificationIterator(notificationList);
+				}
+			}
+			interface Iterator {
+				boolean hasNext();
+				Object next();
+			}
+			public class NotificationIterator implements Iterator {
+				List<Notification> notificationList;
+				int pos = 0;
+				public NotificationIterator(Notification[] notificationList) {
+					this.notificationList = notificationList;
+				}
+				public Object next() {
+					Notification notification = notificationList.get(pos);
+					pos += 1;
+					return notification;
+				}
+				public boolean hasNext() {
+					return (pos >= notificationList.size() || notification.get(pos) == null);
+				}
+			}
+			public class Client {
+				public static void main(String[] args) {
+					NotificationCollection nc = new NotificationCollection();
+					Iterator iterator = nc.createIterator();
+					while(iterator.hasNext()) {
+						Notification n = (Notification)iterator.next();
+						System.out.println(n.getNotification());
+					}
+				}
+			}
+
+	5. Observer Design Pattern:
+		- It defines a one-to-many dependency between objects so that when one object (the subject) changes state, all its dependents (observers) are notified and updated automatically.
+		- It primarily deals with the interaction and communication between objects, specifically focusing on how objects behave in response to changes in the state of other objects.
+		ex:
+			public interface Subject {
+				void addObserver(Observer observer);
+				void removeObserver(Observer observer);
+				void notifyObservers();
+			}
+			public interface Observer {
+				void update(String weather);
+			}
+			public class WeatherStation implements Subject {
+				private List<Observer> observers = new ArrayList<>();
+				private String weather;
+				@Override
+				public void addObserver(Observer observer) {
+					observers.add(observer);
+				}
+				@Override
+				public void removeObserver(Observer observer) {
+					observers.remove(observer);
+				}
+				@Override
+				public void notifyObservers(String newWeather) {
+					for(Observer observer) {
+						observer.update(weather);
+					}
+				}
+				public void setWeather(String newWeather) {
+					this.weather = newWeather;
+					notifyObservers();
+				}
+			}
+			public class PhoneDisplay implements Observer {
+				private String weather;
+				@Override
+				public void update(String weather) {
+					this.weather = weather;
+					System.out.println("Phone Display: Weather updated - " + weather);
+				}
+			}
+			public class TVDisplay implements Observer {
+				private String weather;
+				@Override
+				public void update(String weather) {
+					this.weather = weather;
+					System.out.println("TV Display: Weather updated - " + weather);
+				}
+			}
+			public class WeatherApp {
+				public static void main(String[] args) {
+					WeatherStation weatherStation = new WeatherStation();
+					Observer phoneDisplay = new PhoneDisplay();
+					Observer tvDisplay = new TVDisplay();
+					weatherStation.addObserver(phoneDisplay);
+					weatherStation.addObserver(tvDisplay);
+					weatherStation.setWeather("Sunny");
+				}
+			}
