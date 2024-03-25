@@ -1,0 +1,331 @@
+Behavioral Design Patterns Continued
+
+6. Visitor Design Pattern:
+	- It is used when we have to perform an operation on a group of similar kind of Objects.
+	- With the help of this, we can move the operational logic from the objects to another class. It consists of two parts:
+		i. a method called visit() which is implemented by the visitor and is called for every element in the data structure.
+		ii. visitable classes providing accept() methods that accept a visitor.
+	ex:
+		interface ItemElement {
+			public int accept(ShoppingCartVisitor visitor);
+		}
+		class Book implements ItemElement {
+			private int price;
+			private String isbnNumber;
+			public Book(int price, String isbnNumber) {
+				this.price = price;
+				this.isbnNumber = isbnNumber;
+			}
+			public int getPrice() { return price; }
+			public String getIsbnNumber() { return isbnNumber; }
+			@Override
+			public int accept(ShoppingCartVisitor visitor) {
+				return visitor.visit(this);
+			}
+		}
+		class Fruit implements ItemElement {
+			private int pricePerKg;
+			private int weight;
+			private String name;
+			public Fruit(int pricePerKg, int weight, String name) {
+				this.pricePerKg = pricePerKg;
+				this.weight = weight;
+				this.name = name;
+			}
+			public int getPricePerKg() { return pricePerKg; }
+			public int getWeight() { return weight; }
+			public String getName() { return name; }
+			@Override
+			public int accept(ShoppingCartVisitor visitor) {
+				return visitor.visit(this);
+			}
+		}
+		interface ShoppingCartVisitor {
+			int visit(Book book);
+			int visit(Fruit fruit);
+		}
+		class ShoppingCartVisitorImpl implements ShoppingCartVisitor {
+			@Override
+			public int visit(Book book) {
+				int cost = book.getPrice();
+				if(book.getPrice() > 50)
+					cost -= 5;
+				System.out.println("Book ISBN: " + book.getIsbnNumber() + " cost = " + cost);
+				return cost;
+			}
+			@Override
+			public int visit(Fruit fruit) {
+				int cost = fruit.getPricePerKg() * fruit.getWeight();
+				System.out.println(fruit.getName() + " cost = " + cost);
+				return cost;
+			}
+		}
+		class Client {
+			public static void main(String[] args) {
+				ItemElement[] items = new ItemElement[] {new Book(20, "1234"), new Book(100, "5678"), new Fruit(5, 5, "Apple");
+				int total = calculatePrice(items);
+				System.out.println("Total cost = " + total);
+			}
+			private static int calculatePrice(ItemElement[] items) {
+				ShoppingCartVisitorImpl visitor = new ShoppingCartVisitorImpl();
+				int sum = 0;
+				for(ItemElement item: items) 
+					sum += item.accept(visitor);
+				return sum;
+			}
+		}
+
+7. Template Design Pattern:
+	- It defines the skeleton of an algorithm in a superclass but allows subclasses to override specific steps of the algorithm without changing its structure.
+	- It allows subclasses to customize specific parts of the algorithm without altering its overall structure.
+	- The overall structure and sequence of the algorithm are preserved by the parent class. 
+	ex:
+		abstract class BeverageMaker {
+			public final void makeBeverage() {
+				boilWater();
+				brew();
+				pourInCup();
+				addCondiments();
+			}
+			abstract void brew();
+			abstract void addCondiments();
+			void boilWater() {
+				System.out.println("Boiling Water");
+			}
+			void pourInCup() {
+				System.out.println("Pouring in cup");
+			}
+		}
+		class TeaMaker extends BeverageMaker {
+			@Override
+			void brew() {
+				System.out.println("Steeping the tea");
+			}
+			Override
+			void addCondiments() {
+				System.out.println("Adding lemon");
+			}
+		}
+		class CoffeeMaker extends BeverageMaker {
+			@Override
+			void brew() {
+				System.out.println("Dripping coffee through filter");
+			}
+			Override
+			void addCondiments() {
+				System.out.println("Adding sugar and milk");
+			}
+		}
+		public class Main {
+			public static void main() {
+				System.out.println("Making tea:");
+				BeverageMaker teaMaker = new TeaMaker();
+				teaMaker.makeBeverage();
+				
+				System.out.println("Making coffee:");
+				BeverageMaker coffeeMaker = new CoffeeMaker();
+				coffeeMaker.makeBeverage();
+			}
+		}
+
+8. Memento Design Pattern:
+	- It used to capture and restore the internal state of an object without exposing its implementation details.
+	- It allows you to save and restore the state of an object to a previous state, providing the ability to undo or roll back changes made to the object.
+	- Its entities: Memento, Originator, Caretaker
+	ex:
+		// Originator (Document)
+		public class Document {
+			private String content;
+			public Document(String content) {
+				this.content = content;
+			}
+			public void write(String text) {
+				this.content += text;
+			}
+			public String getContent() {
+				return this.content;
+			}
+			public DocumentMemento createMemento() {
+				return new DocumentMemento(this.content);
+			}
+			public void restoreFromMemento(DocumentMemento memento) {
+				this.content = memento.getSavedContent();
+			}
+		}
+		public class DocumentMemento {
+			private String content;
+			public DocumentMemento(String content) {
+				this.content = content;
+			}
+			public String getSavedContent() {
+				return this.content;
+			}
+		}
+		// Caretaker (History)
+		public class History {
+			private List<DocumentMemento> mementos;
+			public History() {
+				this.mementos = new ArrayList<>();
+			}
+			public void addMemento(DocumentMemento memento) {
+				this.mementos.add(memento);
+			}
+			public DocumentMemento getMemento(int index) {
+				return this.mementos.get(index);
+			}
+		}
+		public class Main {
+			public static void main(String[] args) {
+				Document document = new Document("Initial content\n");
+				History history = new History();
+				
+				document.write("Additional Content\n");
+				history.addMemento(document.createMemento());
+				document.write("More content\n");
+				history.addMemento(document.createMemento());
+				
+				document.restoreFromMemento(history.getMemento(1));
+				System.out.println(document.getContent());
+			}
+		}
+
+	9. Mediator Design Pattern:
+		- It defines an object, the mediator, to centralize communication between various components or objects in a system.
+		- This promotes loose coupling by preventing direct interactions between components, instead having them communicate through the mediator, facilitating better maintainability and flexibility in the system architecture.
+		ex:
+			public abstract class Component {
+				private String name;
+				protected Mediator mediator;
+				public Component(String name, Mediator mediator) {
+					this.name = name;
+					this.mediator = mediator;
+				}
+				public abstract void send();
+				public abstract void recieve(String message);
+				public String getName() {
+					return this.name;
+				}
+			}
+			public class ComponentA extends Component {
+				public ComponentA(Mediator mediator) {
+					super("Component-A", mediator);
+				}
+				@Override
+				public void send() {
+					String message = "I am good."
+					System.out.println("A is sending: " + message);
+					this.mediator.notify(this, message);
+				}
+				@Override
+				public void recieve(String message) {
+					System.out.println("Component A got: " + message);
+				}
+			}
+			public class ComponentB extends Component {
+				public ComponentB(Mediator mediator) {
+					super("Component-B", mediator);
+				}
+				@Override
+				public void send() {
+					String message = "Hey!! What's up?"
+					System.out.println("B is sending: " + message);
+					this.mediator.notify(this, message);
+				}
+				@Override
+				public void recieve(String message) {
+					System.out.println("Component B got: " + message);
+				}
+			}
+			public interface Mediator {
+				void notify(Component sender, String message);
+				void register(Component component);
+			}
+			public class ConcreteMediator implements Mediator {
+				private final String COMPONENT_A = "Component-A";
+				private final String COMPONENT_B = "Component-B";
+				private Map<String, Component> regComMap = new HashMap<>();
+				@Override
+				public void notify(Component sender, String message) {
+					String senderName = sender.getName();
+					if(COMPONENT_A.equals(senderName)
+						reactOnA(message);
+					else if(COMPONENT_B.equals(senderName)
+						reactOnB(message);
+				}
+				@Override
+				public void register(Component component) {
+					this.regComMap.put(component.getName(), component);
+				}
+				private void reactOnA(String message) {
+					System.out.println("Mediator is in action: ");
+					regComMap.get(COMPONENT_B).recieve(message);
+				}
+				private void reactOnB(String message) {
+					System.out.println("Mediator is in action: ");
+					regComMap.get(COMPONENT_A).recieve(message);
+				}
+			}
+			public class Main {
+				public static void main(String[] args) {
+					Mediator mediator = new ConcreteMediator();
+					Component compA = new ComponentA(mediator);
+					Component compB = new ComponentB(mediator);
+					mediator.register(compA);
+					mediator.register(compB);
+					compA.send();
+					System.out.println();
+					compB.send();
+				}
+			}
+
+	10. State Design Pattern:
+		- It allows an object to alter its behavior when its internal state changes.
+		- It achieves this by encapsulating the object’s behavior within different state objects, and the object itself dynamically switches between these state objects depending on its current state.
+		ex:
+			public class VendingMachineContext {
+				private VendingMachineState state;
+				public void setState(VendingMachineState state) {
+					this.state = state;
+				}
+				public void request() {
+					state.handleRequest();
+				}
+			}
+			public interface VendingMachineState {
+				void handleRequest();
+			}
+			public class ReadyState implements VendingMachineState {
+				@Override
+				public void handleRequest() {
+					System.out.println("Ready state: Please select a product.");
+				}
+			}
+			public class ProductSelectedState implements VendingMachineState {
+				@Override
+				public void handleRequest() {
+					System.out.println("Product selected state: Processing payment.");
+				}
+			}
+			public class PaymentPendingState implements VendingMachineState {
+				@Override
+				public void handleRequest() {
+					System.out.println("Payment pending state: Dispensing product.");
+				}
+			}
+			public class OutOfStockState implements VendingMachineState {
+				@Override
+				public void handleRequest() {
+					System.out.println("Out of stock state: Product unavailable.");
+				}
+			}
+			public class Main {
+				public static void main(String[] args) {
+					VendingMachineContext vendingMachine = new VendingMachineContext();
+					vendingMachine.setState(new ReadyState());
+					vendingMachine.request();
+					vendingMachine.setState(new ProductSelectedState());
+					vendingMachine.request();
+					vendingMachine.setState(new PaymentPendingState());
+					vendingMachine.request();
+				}
+			}
