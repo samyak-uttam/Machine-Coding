@@ -22,7 +22,7 @@ The SOLID principles are:
 
 	3. Liskov substitution principle:
 		- "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it".
-		- Objects in a program should be replacable with instances of their subtypes without altering the correctness of the program.
+		- Objects in a program should be replaceable with instances of their subtypes without altering the correctness of the program.
 		- A client using a base class should continue to function properly even if a derived class is passed to it.
 		ex: Parent obj = new Child1();
 			obj = new Child2();

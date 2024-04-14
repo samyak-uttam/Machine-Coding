@@ -9,7 +9,7 @@ Some popular and useful design principles:
 2. Curly's Law - Do one Thing:
 	- Curly's law: A entity (function, variable, class) should mean one thing, and one thing 
 	  only. It should not mean two things at once.
-	- It is about choosing a single, clearly defined goal for any particualr bit of code: Do one thing.
+	- It is about choosing a single, clearly defined goal for any particular bit of code: Do one thing.
 
 3. Keep It Simple Stupid (KISS):
 	- The KISS principle states that most systems work best if they are kept simple rather than made
@@ -24,13 +24,13 @@ Some popular and useful design principles:
 
 5. You Aren't Gonna Need It (YAGNI):
 	- YAGNI is an Extreme Programming practice which states: Always implement things when you actually
-	  need them, never when you just forsee that you need them.
-	- This doesn't mean you should avoid building flexibility into your code. It meands you shouldn't 
+	  need them, never when you just foresee that you need them.
+	- This doesn't mean you should avoid building flexibility into your code. It means you shouldn't 
 	  overengineer something based on what you think you might need later on.
 
 6. Premature Optimization is the Root of all Evil:
 	- We should forget about small efficiencies, say about 97% of the time. Yet we should not pass up 
-      opportunities in that ciritical 3%.
+      opportunities in that critical 3%.
 	- This wastes time and generally have a strong negative impact when debugging and maintenance are
 	  considered.
 
